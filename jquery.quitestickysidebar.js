@@ -1,7 +1,7 @@
 /*
- *	quite Sticky Sidebar jQuery Plugin.
+ *	quite Sticky Sidebar jQuery Plugin. ver 1.07
  *
- *	Copyright 2013 Hirotaka Matsuoka. (TeraDas.net) / https://github.com/hiromo
+ *	Copyright 2013-2014 Hirotaka Matsuoka. (TeraDas.net) / https://github.com/hiromo
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -41,7 +41,6 @@ jQuery.fn.quiteStickySidebar = function(target, footer, anchorX, anchorY, margin
 	var windowHeight;
 	var targetHeight;
 	var targetPosition;
-	var targetLeftFixed;
 	var anchorPositionX;
 	var anchorPositionY;
 	var footerHeight;
@@ -55,6 +54,7 @@ jQuery.fn.quiteStickySidebar = function(target, footer, anchorX, anchorY, margin
 		footerPosition = footer.position();
 		anchorPositionX = anchorX ? anchorX.position() : null ;
 		anchorPositionY = anchorY ? anchorY.position() : null ;
+		stickyElement();
 	});
 	
 	$(window).resize(function(){
@@ -77,32 +77,39 @@ jQuery.fn.quiteStickySidebar = function(target, footer, anchorX, anchorY, margin
 		var visibleBottom = scrollTop + windowHeight;
 		var targetTop = anchorY ? anchorPositionY.top : targetPosition.top ;
 		var targetBottom = targetPosition.top + targetHeight;
-		var targetLeftFixed = anchorPositionX ? anchorPositionX.left- scrollLeft : targetPosition.left - scrollLeft;
+		var targetLeftFixedCss = anchorPositionX ? {left: anchorPositionX.left- scrollLeft} : null;
 		var footerTop = footerPosition.top;
 		
 		if (targetHeight > windowHeight) {
+			// target heigher than window height.
 			if (visibleBottom > targetBottom) {
 				if(visibleBottom >= footerTop) {
-					target.css({position:"fixed", top: footerTop - scrollTop - targetHeight , left: targetLeftFixed});
+					// clogged with footer top.
+					target.css({position:"fixed", top: footerTop - scrollTop - targetHeight});
 				} else {
-					target.css({position:"fixed", top: windowHeight - targetHeight , left: targetLeftFixed});
+					target.css({position:"fixed", top: windowHeight - targetHeight});
 				}
+				if ( anchorPositionX ) { target.css( targetLeftFixedCss ) };
 			} else {
-				target.css({position:"static", top:"", left:""});
+				target.css({position:"static", top:""});
+				if ( anchorPositionX ) { target.css({left:""}) }
 			}
 			
 		} else {
+			// target smaller than window height.
 			if (scrollTop > targetTop) {
 				if(scrollTop + targetHeight >= footerTop) {
-					target.css({position:"fixed", top: footerTop - scrollTop - targetHeight , left: targetLeftFixed});
+					// clogged with footer top.
+					target.css({position:"fixed", top: footerTop - scrollTop - targetHeight});
 				} else {
-					target.css({position:"fixed", top: 0 , left: targetLeftFixed});
+					target.css({position:"fixed", top: 0});
 				}
+				if ( anchorPositionX ) { target.css( targetLeftFixedCss ) };
 			} else {
-				target.css({position:"static", top:"", left:""});
+				target.css({position:"static", top:""});
+				if ( anchorPositionX ) { target.css({left:""}) }
 			}
 		}
 	}
 	
 };
-
